@@ -20,11 +20,12 @@ export default ({ id, accept }: UseMaterialDropProps) => {
       // 也会触发外层的useDrop.drop
       const didDrop = monitor.didDrop()
       if(didDrop) return
-      const props = componentConfig[item.type].defaultProps
+      const config = componentConfig[item.type]
       addComponent({
         id: Date.now(),
         name: item.type,
-        props
+        desc: config.desc,
+        props: config.defaultProps
       }, id)
       message.success(item.type)
     },

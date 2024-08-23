@@ -5,12 +5,14 @@ import MaterialItem from './MaterialItem'
 const Material: FC = () => {
   const { componentConfig } = useComponentConfigStore()
 
-  const components = useMemo(() => Object.values(componentConfig),[componentConfig])
+  const components = useMemo(() => 
+    Object.values(componentConfig).filter(item => item.name !== 'Page')
+  ,[componentConfig])
 
   return (
     <>
       {
-        components.map(item => <MaterialItem key={item.name} name={item.name} />)
+        components.map(item => <MaterialItem key={item.name} name={item.name} desc={item.desc} />)
       }
     </>
   )

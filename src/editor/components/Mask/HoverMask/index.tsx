@@ -5,71 +5,22 @@
 */
 import { FC, memo, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom';
-import { useMemoizedFn } from 'ahooks';
-import { useImmer } from 'use-immer'
 import { getComponentById, useComponentsStore } from '@/editorStore/components'
-
-interface HoverMaskProps {
-  containerClassName: string;
-  componentId: number;
-  /** 挂载protal的元素 */
-  portalWrapper?: HTMLElement;
-}
+import useDomPosition from '../useDomPosition';
+import { HoverMaskProps } from '../interface'
 
 /** label高度 */
 const labelHeight = 20
 
-const defaultPosition = {
-  /* 边框位置信息 */
-  left: 0,
-  top: 0,
-  /* 边框大小信息 */
-  width: 0,
-  height: 0,
-  /* label的位置信息 */
-  labelLeft: 0,
-  labelTop: 0,
-}
-
 const HoverMask: FC<HoverMaskProps> = ({ containerClassName, componentId, portalWrapper }) => {
-
-  const [position, updatePosition] = useImmer(defaultPosition)
 
   const { components } = useComponentsStore()
 
-  const updatePositionHandler = useMemoizedFn(({
-    containerClassName, componentId
-  }: Pick<HoverMaskProps, 'componentId' | 'containerClassName'>) => {
-    const parent = document.getElementsByClassName(containerClassName)[0]
-    if(!parent) return
-
-    const dom = parent.querySelector(`[data-component-id="${componentId}"]`)
-    if(!dom) return
-
-    const { left, top, width, height } = dom.getBoundingClientRect()
-    const { left: parentLeft, top: parentTop } = parent.getBoundingClientRect()
-
-    const labelLeft = left - parentLeft + width
-    let labelTop = top - parentTop + parent.scrollTop
-    // 被遮挡
-    if (labelTop <= labelHeight) {
-      labelTop += labelHeight;
-    }
-
-    updatePosition(d => {
-      d.width = width
-      d.height = height
-      d.left = left - parentLeft + parent.scrollLeft
-      d.top = top - parentTop + parent.scrollTop
-      /* label定位到框的右上角 */
-      d.labelLeft = labelLeft
-      d.labelTop = labelTop
-    })
-  })
+  const { position, updatePositionHandler } = useDomPosition()
 
   useEffect(() => {
-    updatePositionHandler({ componentId, containerClassName })
-  }, [containerClassName, componentId, updatePositionHandler])
+    updatePositionHandler({ componentId, containerClassName, labelHeight })
+  }, [containerClassName, componentId, components, updatePositionHandler])
 
   const poralDom = useMemo(() => {
     if(portalWrapper) return portalWrapper
@@ -86,9 +37,9 @@ const HoverMask: FC<HoverMaskProps> = ({ containerClassName, componentId, portal
     getComponentById(componentId, components)
   , [componentId, components])
 
-
   return createPortal((
     <>
+      {/* 高亮边框 */}
       <div 
         className={
           `absolute
@@ -104,6 +55,7 @@ const HoverMask: FC<HoverMaskProps> = ({ containerClassName, componentId, portal
           height: position.height,
         }}
       />
+      {/* 右上角的label */}
       <div
         className={
           `absolute text-[14px] z-[13] translate-x-[-100%] translate-y-[-100%]`
@@ -117,7 +69,7 @@ const HoverMask: FC<HoverMaskProps> = ({ containerClassName, componentId, portal
         <div
           className='px-[8px] bg-[blue] rounded-[4px] text-[#fff] cursor-pointer whitespace-nowrap'
         >
-          {currentComponent?.name}
+          {currentComponent?.desc}
         </div>
       </div>
     </>

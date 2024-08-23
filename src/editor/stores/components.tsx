@@ -13,12 +13,14 @@ export interface Component {
   props: Record<string, unknown>;
   children?: Component[];
   parentId?: number;
-  /** 组件的描述 */
+  /** 组件的描述 展示用 */
   desc?: string;
 }
 
 interface State {
-  components: Component[]
+  components: Component[];
+  selectedComponentId?: number;
+  selectedComponent?: Component | null
 }
 
 type getPropItem<T, K extends keyof T> = Pick<T, K>[K]
@@ -26,7 +28,8 @@ type getPropItem<T, K extends keyof T> = Pick<T, K>[K]
 interface Action {
   addComponent: (component: Component, parentId: getPropItem<Component, 'parentId'>) => void;
   deleteComponent: (componentId: getPropItem<Component, 'id'>) => void;
-  updateComponentProps: (componentId: getPropItem<Component, 'id'>, props: getPropItem<Component, 'props'>) => void
+  updateComponentProps: (componentId: getPropItem<Component, 'id'>, props: getPropItem<Component, 'props'>) => void;
+  addSelectedComponent: (componentId?: getPropItem<Component, 'id'>) => void;
 }
 
 /**
@@ -61,6 +64,18 @@ export const useComponentsStore = create<State & Action>(
         desc: '主页面'
       }
     ],
+    selectedComponent: undefined,
+    selectedComponentId: undefined,
+    /**
+     * 选中component，保存id和component
+     * @param componentId 
+     */
+    addSelectedComponent: (componentId) => {
+      set(state => ({
+        selectedComponentId: componentId,
+        selectedComponent: getComponentById(componentId, state.components),
+      }))
+    },
     /**
      * 添加一个component
      * 如果有parentId 通过便利找到对应的parentComponent，然后把component插入到子集中
@@ -105,7 +120,6 @@ export const useComponentsStore = create<State & Action>(
         if(parentComponent) {
           parentComponent.children = parentComponent.children?.filter(item => item.id !== componentId)
 
-          // TODO storeComponet和get().components 引用有区别？
           set({ components: [...storeComponent] })
         }
       }

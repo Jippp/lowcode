@@ -9,7 +9,9 @@ import Page from '@/editor/materials/Page'
 interface ComponentConfig {
   name: string;
   defaultProps: Record<string, any>,
-  component: unknown
+  component: unknown;
+  /** 描述 */
+  desc: string;
 }
 
 interface State {
@@ -30,12 +32,14 @@ export const useComponentConfigStore = create<State & Action>(set => ({
     'Page': {
       name: 'Page',
       defaultProps: {},
-      component: Page
+      component: Page,
+      desc: '主页面',
     },
     'Container': {
       name: 'Container',
       defaultProps: {},
-      component: Container
+      component: Container,
+      desc: '容器',
     },
     'Button': {
       name: 'Button',
@@ -43,7 +47,8 @@ export const useComponentConfigStore = create<State & Action>(set => ({
         type: 'primary',
         text: '点击'
       } as ButtonProps,
-      component: Button
+      component: Button,
+      desc: '按钮',
     }
   },
   /**

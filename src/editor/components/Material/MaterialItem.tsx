@@ -4,9 +4,10 @@ import { DragObject } from '@/editor/interface'
 
 interface MaterialItemProps {
   name: string;
+  desc: string;
 }
 
-const MaterialItem: FC<MaterialItemProps> = ({name}) => {
+const MaterialItem: FC<MaterialItemProps> = ({ name, desc }) => {
   
   const [_, dragRef] = useDrag<DragObject>({
     // 当前drag元素的标识，drop的时候根据这个值来决定是否accept
@@ -28,7 +29,7 @@ const MaterialItem: FC<MaterialItemProps> = ({name}) => {
       inline-block
       bg-white
       hover:bg-[#ccc]
-    '>{name}</div>
+    '>{desc}</div>
   )
 }
 
