@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/editor/*": ["./src/editor/*"],
+      "@/editorStore/*": ["./src/editor/stores/*"],
+    }
+  }
+}
