@@ -4,7 +4,7 @@ import { Component } from '@/editorStore/components'
 // store/components中定义的
 export interface ComponentWithChildren extends 
   PropsWithChildren, 
-  Pick<Component, 'id' | 'name'>  
+  Pick<Component, 'id' | 'name' | 'styles'>  
 {
   [key: string]: unknown
 }

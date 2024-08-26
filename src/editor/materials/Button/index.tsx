@@ -5,12 +5,12 @@ import { ComponentWithChildren } from '@/editor/interface'
 
 export interface ButtonProps extends ComponentWithChildren {
   text: string;
-  type: ButtonType
+  type: ButtonType;
 }
 
-const Button: FC<ButtonProps> = ({ id, type, text }) => {
+const Button: FC<ButtonProps> = ({ id, type, text, styles }) => {
   return (
-    <AntdButton data-component-id={id} type={type}>{text}</AntdButton>
+    <AntdButton data-component-id={id} type={type} style={styles}>{text}</AntdButton>
   )
 }
 

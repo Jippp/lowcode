@@ -2,6 +2,7 @@
   zustand的状态管理
 */
 
+import { CSSProperties } from 'react';
 import { create } from 'zustand'
 
 export interface Component {
@@ -15,6 +16,8 @@ export interface Component {
   parentId?: number;
   /** 组件的描述 展示用 */
   desc?: string;
+  /** 自定义样式 */
+  styles?: CSSProperties
 }
 
 interface State {
@@ -30,6 +33,7 @@ interface Action {
   deleteComponent: (componentId: getPropItem<Component, 'id'>) => void;
   updateComponentProps: (componentId: getPropItem<Component, 'id'>, props: getPropItem<Component, 'props'>) => void;
   addSelectedComponent: (componentId?: getPropItem<Component, 'id'>) => void;
+  updateComponentStyles: (componentId: getPropItem<Component, 'id'>, styles: getPropItem<Component, 'styles'>, isReplace?: boolean) => void
 }
 
 /**
@@ -66,6 +70,21 @@ export const useComponentsStore = create<State & Action>(
     ],
     selectedComponent: undefined,
     selectedComponentId: undefined,
+    /**
+     * 更新自定义样式
+     * @param componentId 
+     * @param styles 
+     */
+    updateComponentStyles: (componentId, styles, isReplace) => {
+      set(state => {
+        const component = getComponentById(componentId, state.components)
+        if(component) {
+          // 合并会导致 删除后旧的还有保留，可以通过第三个参数来直接替换
+          component.styles = isReplace ? styles : { ...component.styles, ...styles }
+        }
+        return { components: [...state.components] }
+      })
+    },
     /**
      * 选中component，保存id和component
      * @param componentId 

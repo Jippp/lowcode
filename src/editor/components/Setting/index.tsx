@@ -25,8 +25,8 @@ const Setting: FC = () => {
       />
       <div className='p-[8px]'>
         {selectedKey === segmentConfig[0] && <ComponentAttr />}
-        {selectedKey === segmentConfig[1] && <ComponentEvent />}
-        {selectedKey === segmentConfig[2] && <ComponentStyle />}
+        {selectedKey === segmentConfig[1] && <ComponentStyle />}
+        {selectedKey === segmentConfig[2] && <ComponentEvent />}
       </div>
     </div>
   )

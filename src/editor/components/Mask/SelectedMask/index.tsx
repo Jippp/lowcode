@@ -1,7 +1,7 @@
 import { FC, memo, MouseEventHandler, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom';
 import { useComponentsStore, getComponentById, Component } from '@/editorStore/components'
-import { useMemoizedFn, useSize } from 'ahooks';
+import { useMemoizedFn, useSize, useUpdateEffect } from 'ahooks';
 import { Dropdown, Popconfirm, Space } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import useDomPosition from '../useDomPosition';
@@ -43,7 +43,18 @@ const SelectedMask: FC<HoverMaskProps> = ({
 
   useEffect(() => {
     updatePosition()
-  }, [containerClassName, componentId, components, updatePosition])
+  }, [
+    containerClassName, 
+    componentId, 
+    components, 
+    updatePosition
+  ])
+  // 延迟的原因：虽然先修改的styles，再获取的dom，但是获取dom时页面还没有渲染完成，拿到的dom时更新之前的
+  useUpdateEffect(() => {
+    setTimeout(() => {
+      updatePosition()
+    }, 200)
+  },[selectedComponent?.styles?.width, selectedComponent?.styles?.height, updatePosition])
 
   // 页面以及容器宽度变化，重新计算高亮框
   useEffect(() => {

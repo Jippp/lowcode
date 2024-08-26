@@ -11,19 +11,23 @@ export interface ComponentSetter {
   name: string;
   /** form.item.label属性 */
   label: string;
+  /** 可交互类型 如select选择、input输入框 */
   type: string;
+  /** 其他一些用来传递给自定义组件的参数 */
   [key: string]: any;
 }
 
 // 物料中组件的定义
-interface ComponentConfig {
+export interface ComponentConfig {
   name: string;
   defaultProps: Record<string, any>,
   component: unknown;
   /** 描述 */
   desc: string;
-  /** 可交互的部分 */
+  /** 可交互的配置 */
   setter?: ComponentSetter[];
+  /** css央视可交互的配置 */
+  stylesSetter?: ComponentSetter[];
 }
 
 interface State {
@@ -63,10 +67,31 @@ export const useComponentConfigStore = create<State & Action>(set => ({
       desc: '按钮',
       setter: [
         {
-          name: '',
-          label: '',
-          type: '',
+          name: 'type',
+          label: '按钮类型',
+          type: 'select',
+          options: [
+            {label: '主按钮', value: 'primary'},
+            {label: '次按钮', value: 'default'},
+          ]
+        },
+        {
+          name: 'text',
+          label: '文本',
+          type: 'input',
         }
+      ],
+      stylesSetter: [
+        {
+          name: 'width',
+          label: '宽度',
+          type: 'inputNumber'
+        },
+        {
+          name: 'height',
+          label: '高度',
+          type: 'inputNumber'
+        },
       ]
     }
   },
