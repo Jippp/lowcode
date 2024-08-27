@@ -50,6 +50,7 @@ const SelectedMask: FC<HoverMaskProps> = ({
     updatePosition
   ])
   // 延迟的原因：虽然先修改的styles，再获取的dom，但是获取dom时页面还没有渲染完成，拿到的dom时更新之前的
+  // TODO 对于一些位置等的变动都应该监听
   useUpdateEffect(() => {
     setTimeout(() => {
       updatePosition()

@@ -22,6 +22,8 @@ export interface Component {
 
 interface State {
   components: Component[];
+  /** 当前的状态是编辑还是预览 */
+  status: 'editing' | 'preview';
   selectedComponentId?: number;
   selectedComponent?: Component | null
 }
@@ -33,7 +35,8 @@ interface Action {
   deleteComponent: (componentId: getPropItem<Component, 'id'>) => void;
   updateComponentProps: (componentId: getPropItem<Component, 'id'>, props: getPropItem<Component, 'props'>) => void;
   addSelectedComponent: (componentId?: getPropItem<Component, 'id'>) => void;
-  updateComponentStyles: (componentId: getPropItem<Component, 'id'>, styles: getPropItem<Component, 'styles'>, isReplace?: boolean) => void
+  updateComponentStyles: (componentId: getPropItem<Component, 'id'>, styles: getPropItem<Component, 'styles'>, isReplace?: boolean) => void,
+  changeStatus: (status: getPropItem<State, 'status'>) => void,
 }
 
 /**
@@ -68,8 +71,12 @@ export const useComponentsStore = create<State & Action>(
         desc: '主页面'
       }
     ],
+    status: 'editing',
     selectedComponent: undefined,
     selectedComponentId: undefined,
+    changeStatus: (status) => {
+      set(() => ({ status }))
+    },
     /**
      * 更新自定义样式
      * @param componentId 

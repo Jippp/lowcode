@@ -47,6 +47,7 @@ export default (labelAlign: 'left' | 'right' = 'right') => {
       labelTop += labelHeight;
     }
 
+    // TODO 位置计算的并不完善,会有一些translate margin等的变动也会导致位置变化
     updatePosition(d => {
       d.width = width
       d.height = height

@@ -44,8 +44,8 @@ const EditArea: FC = () => {
   const renderComponents = useMemoizedFn((components: Component[]): React.ReactNode => {
     return components.map((component: Component) => {
       const config = componentConfig[component.name]
-      if(config && config.component) {
-        return createElement(config.component as any, {
+      if(config && config.editing) {
+        return createElement(config.editing as any, {
           key: component.id,
           id: component.id,
           name: component.name,

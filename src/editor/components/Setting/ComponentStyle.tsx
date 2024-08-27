@@ -1,4 +1,4 @@
-import { CSSProperties, FC, memo, useEffect, useMemo, useState } from 'react'
+import { CSSProperties, FC, memo, useEffect, useMemo } from 'react'
 import { Form, Input, InputNumber } from 'antd'
 import { useMemoizedFn } from 'ahooks'
 import { debounce } from 'lodash-es'
@@ -10,7 +10,7 @@ import CssEditor, { OnChange } from './CssEditor'
 /** 将存储的styles转为css样式 */
 function toCSSStr(styles: CSSProperties) {
   let str = `.comp {\n`;
-  for (const key in styles) {
+  for (let key in styles) {
     let value = styles[key as keyof CSSProperties];
     if (!value) {
       continue;
@@ -18,6 +18,8 @@ function toCSSStr(styles: CSSProperties) {
     if (['width', 'height'].includes(key) && !value.toString().endsWith('px')) {
       value += 'px';
     }
+    // 小驼峰转-
+    key = key.replace(/([A-Z])/g, '-$1').toLowerCase();
 
     str += `\t${key}: ${value};\n`
   }
@@ -30,7 +32,6 @@ const defaultCssValue = `.comp{\n\n}`
 /** 组件样式相关 */
 const ComponentStyle: FC = () => {
   const [form] = Form.useForm()
-  const [cssValue, setCssValue] = useState(defaultCssValue)
 
   const { selectedComponent, selectedComponentId, updateComponentStyles } = useComponentsStore()
   const { componentConfig } = useComponentConfigStore()
@@ -38,6 +39,11 @@ const ComponentStyle: FC = () => {
   const componentConfigItem = useMemo(() => (
     selectedComponent ? componentConfig[selectedComponent.name] : {}
   ) as ComponentConfig, [componentConfig, selectedComponent])
+
+  const cssValue = useMemo(() => 
+    selectedComponent && selectedComponent?.styles ? toCSSStr(selectedComponent.styles) : defaultCssValue
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  , [selectedComponent, selectedComponent?.styles])
 
   /** 根据配置的type来渲染对应组件 */
   const renderComponentByType = useMemoizedFn((setterConfig: ComponentSetter) => {
@@ -62,7 +68,6 @@ const ComponentStyle: FC = () => {
   const handleCssChange: OnChange = useMemoizedFn(debounce((value) => {
     if (!selectedComponentId) return null
     try {
-      setCssValue(value)
       const css: Record<string, any> = {}
       const cssStr = value.replace(/\/\*.*\*\//, '') // 去掉注释 /** */
         .replace(/(\.?[^{]+{)/, '') // 去掉 .comp {
@@ -88,11 +93,6 @@ const ComponentStyle: FC = () => {
     const data = form.getFieldsValue()
     form.setFieldsValue({ ...data, ...selectedComponent?.props })
 
-    if(selectedComponent?.styles) {
-      setCssValue(toCSSStr(selectedComponent.styles))
-    }else {
-      setCssValue(defaultCssValue)
-    }
   }, [form, selectedComponent])
 
   if (!selectedComponentId) return null
