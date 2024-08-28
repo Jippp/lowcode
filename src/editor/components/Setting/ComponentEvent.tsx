@@ -1,20 +1,21 @@
 import { FC, Fragment, memo, useMemo, useState } from 'react'
 import { Button, Collapse } from 'antd'
 import { useBoolean, useMemoizedFn } from 'ahooks'
-import { DeleteOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { useComponentConfigStore, EventSetter } from '@/editorStore/component-config'
 import {
   useComponentsStore,
   ActionItem,
   EventConfigProps,
 } from '@/editorStore/components'
-import { EventActionEnums } from './eventAction/interface'
+import { EventActionEnums, EventActionNameEnums } from './eventAction/interface'
 import ActionModal from './ActionModal'
 
 /** 组件事件相关 */
 const ComponentEvent: FC = () => {
   const [actionModalVisible, { setFalse: closeActionModal, setTrue: openActionModal }] = useBoolean(false)
   const [currentEventName, setCurrentEventName] = useState('')
+  const [currentActionName, setCurrentActionName] = useState(EventActionNameEnums.GoToLink)
 
   const { selectedComponent, selectedComponentId, updateComponentProps } = useComponentsStore()
   const { componentConfig } = useComponentConfigStore()
@@ -38,6 +39,7 @@ const ComponentEvent: FC = () => {
 
   const handleOpenActionModal = useMemoizedFn((e, eventName: string) => {
     setCurrentEventName(eventName)
+    setCurrentActionName(EventActionNameEnums.GoToLink)
     // 阻止冒泡 误触发collapse的展开/收起
     e.stopPropagation()
     openActionModal()
@@ -50,6 +52,12 @@ const ComponentEvent: FC = () => {
         actions: (currentEventProps?.actions || []).filter((_, idx) => idx !== index)
       }
     })
+  })
+
+  const handleEditAction = useMemoizedFn((eventName: string, actionName: EventActionNameEnums) => {
+    setCurrentEventName(eventName)
+    setCurrentActionName(actionName)
+    openActionModal()
   })
 
   const collapseItem = useMemo(() => {
@@ -77,8 +85,12 @@ const ComponentEvent: FC = () => {
                   {
                     action.type === EventActionEnums.GoToLink ? (
                       <div className='border border-[#aaa] mt-[10px] p-[10px] rounded-[8px] relative'>
-                        <div className='text-[blue]'>跳转链接</div>
+                        <div className='text-[blue]'>{EventActionNameEnums.GoToLink}</div>
                         <div>{action.url}</div>
+                        <div 
+                          className='absolute top-[10px] right-[30px] cursor-pointer'
+                          onClick={() => handleEditAction(event.name, EventActionNameEnums.GoToLink)}
+                        ><EditOutlined /></div>
                         <div 
                           className='absolute top-[10px] right-[10px] cursor-pointer'
                           onClick={() => handleDeleteAction(currentEventProps, index)}
@@ -89,9 +101,29 @@ const ComponentEvent: FC = () => {
                   {
                     action.type === EventActionEnums.ShowMessage ? (
                       <div className='border border-[#aaa] mt-[10px] p-[10px] rounded-[8px] relative'>
-                        <div className='text-[blue]'>消息弹窗</div>
+                        <div className='text-[blue]'>{EventActionNameEnums.ShowMessage}</div>
                         <div>消息类型: {action.messsageMethod}</div>
                         <div>消息文本: {action.messsageContent}</div>
+                        <div 
+                          className='absolute top-[10px] right-[30px] cursor-pointer'
+                          onClick={() => handleEditAction(event.name, EventActionNameEnums.ShowMessage)}
+                        ><EditOutlined /></div>
+                        <div 
+                          className='absolute top-[10px] right-[10px] cursor-pointer'
+                          onClick={() => handleDeleteAction(currentEventProps, index)}
+                        ><DeleteOutlined /></div>
+                      </div>
+                    ) : null
+                  }
+                  {
+                    action.type === EventActionEnums.CustomJS ? (
+                      <div className='border border-[#aaa] mt-[10px] p-[10px] rounded-[8px] relative'>
+                        <div className='text-[blue]'>{EventActionNameEnums.CustomJS}</div>
+                        <pre>{JSON.stringify(action.code, null, 2)}</pre>
+                        <div 
+                          className='absolute top-[10px] right-[30px] cursor-pointer'
+                          onClick={() => handleEditAction(event.name, EventActionNameEnums.CustomJS)}
+                        ><EditOutlined /></div>
                         <div 
                           className='absolute top-[10px] right-[10px] cursor-pointer'
                           onClick={() => handleDeleteAction(currentEventProps, index)}
@@ -106,7 +138,7 @@ const ComponentEvent: FC = () => {
         )
       }
     })
-  }, [eventSetterConfig, selectedComponentProps, handleOpenActionModal, handleDeleteAction])
+  }, [eventSetterConfig, selectedComponentProps, handleOpenActionModal, handleEditAction, handleDeleteAction])
 
   if (!selectedComponent) return null
 
@@ -121,6 +153,7 @@ const ComponentEvent: FC = () => {
         closeModal={closeActionModal}
         onOk={handleModalConfirm}
         eventName={currentEventName}
+        actionName={currentActionName}
       />
     </>
   )

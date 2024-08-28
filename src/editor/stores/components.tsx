@@ -21,9 +21,16 @@ export type ShowMessageInputValue = {
 /** ShowMessage绑定事件的参数 */
 export type ShowMessageValue = ShowMessageSelectValue & ShowMessageInputValue;
 
+/** CustomJS绑定事件的参数 */
+export type CustomJSValue = { 
+  /** 自定义的代码 */
+  code: string 
+};
+
 export interface ActionItem extends 
   Partial<GoToLinkValue>,
-  Partial<ShowMessageValue> 
+  Partial<ShowMessageValue>,
+  Partial<CustomJSValue>
 {
   type: string;
   [key: string]: any;
@@ -32,15 +39,8 @@ export interface EventConfigProps {
   actions?: ActionItem[]
 }
 
-export interface ComponentProps {
+export interface ComponentProps extends EventConfigProps {
   // 绑定点击事件时可能用到的参数
-  onClick?: {
-    /** EventActionEnums.GoToLink */
-    url?: string;
-    /** EventActionEnums.ShowMessage */
-    messsageMethod?: string;
-    messsageContent?: string;
-  } & EventConfigProps;
   [key: string]: unknown;
 }
 

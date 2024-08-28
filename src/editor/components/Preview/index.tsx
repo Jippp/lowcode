@@ -37,6 +37,19 @@ const Preview: FC = () => {
               }
             }
           }
+          if(type === EventActionEnums.CustomJS) {
+            if(actionItem.code) {
+              return () => {
+                // 最后一个参数是函数体，前面的是函数参数名称
+                const run = new Function('context', actionItem.code!)
+                run({
+                  name: component.name,
+                  props: component.props,
+                })
+              }
+            }
+          }
+
           return () => {}
         })
 
