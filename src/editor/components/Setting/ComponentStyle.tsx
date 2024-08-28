@@ -81,7 +81,7 @@ const ComponentStyle: FC = () => {
         ...css
       }, true)
     } catch (error) {
-      console.error(error)
+      // console.error(error)
     }
   }, 500))
 

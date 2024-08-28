@@ -33,7 +33,6 @@ const CustomJS: FC<GoToLinkProps> = ({ actionItem, onChange }) => {
   })
 
   const handleEditorChange: OnChange = useMemoizedFn(debounce((value) => {
-    console.log('%cchange', 'color: red; font-size: 20px', value);
     setEditorValue(value)
 
     onChange({ code: value })

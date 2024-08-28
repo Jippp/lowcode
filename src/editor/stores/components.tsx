@@ -3,6 +3,7 @@
 */
 import { CSSProperties } from 'react';
 import { create } from 'zustand'
+import { EventActionEnums } from '@/editor/components/Setting/eventAction/interface'
 
 /** GoToLink绑定事件的参数 */
 export type GoToLinkValue = { 
@@ -32,7 +33,8 @@ export interface ActionItem extends
   Partial<ShowMessageValue>,
   Partial<CustomJSValue>
 {
-  type: string;
+  /** 事件类型 */
+  type: EventActionEnums;
   [key: string]: any;
 }
 export interface EventConfigProps {
