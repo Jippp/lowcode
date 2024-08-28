@@ -9,6 +9,13 @@ export interface ComponentWithChildren extends
   [key: string]: unknown
 }
 
+export interface PreviewComponentWithChildren extends 
+  PropsWithChildren, 
+  Pick<Component, 'name' | 'styles'>  
+{
+  [key: string]: unknown
+}
+
 /** drop时传递的信息 */
 export interface DragObject {
   type: Pick<Component, 'name'>['name']

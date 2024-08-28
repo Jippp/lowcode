@@ -20,6 +20,11 @@ export interface ComponentSetter {
   [key: string]: any;
 }
 
+export interface EventSetter {
+  name: string;
+  label: string;
+}
+
 // 物料中组件的定义
 export interface ComponentConfig {
   name: string;
@@ -34,6 +39,8 @@ export interface ComponentConfig {
   setter?: ComponentSetter[];
   /** css样式可交互的配置 */
   stylesSetter?: ComponentSetter[];
+  /** 自定义事件的配置 */
+  eventSetter?: EventSetter[];
 }
 
 interface State {
@@ -100,6 +107,16 @@ export const useComponentConfigStore = create<State & Action>(set => ({
           name: 'height',
           label: '高度',
           type: 'inputNumber'
+        },
+      ],
+      eventSetter: [
+        {
+          name: 'onClick',
+          label: '点击事件'
+        },
+        {
+          name: 'onDoubleClick',
+          label: '双击事件'
         },
       ]
     }

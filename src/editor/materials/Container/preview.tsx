@@ -1,7 +1,7 @@
 import { FC, memo } from 'react'
-import { ComponentWithChildren } from '@/editor/interface'
+import { PreviewComponentWithChildren } from '@/editor/interface'
 
-const Container: FC<ComponentWithChildren> = ({ styles, children }) => {
+const Container: FC<PreviewComponentWithChildren> = ({ styles, children }) => {
   
   return (
     <div 

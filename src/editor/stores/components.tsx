@@ -1,17 +1,56 @@
 /* 
   zustand的状态管理
 */
-
 import { CSSProperties } from 'react';
 import { create } from 'zustand'
+
+/** GoToLink绑定事件的参数 */
+export type GoToLinkValue = { 
+  /** 跳转的路径 */
+  url: string 
+};
+
+export type ShowMessageSelectValue = { 
+  /** message类型 */
+  messsageMethod: string 
+};
+export type ShowMessageInputValue = { 
+  /** message文本 */
+  messsageContent: string 
+};
+/** ShowMessage绑定事件的参数 */
+export type ShowMessageValue = ShowMessageSelectValue & ShowMessageInputValue;
+
+export interface ActionItem extends 
+  Partial<GoToLinkValue>,
+  Partial<ShowMessageValue> 
+{
+  type: string;
+  [key: string]: any;
+}
+export interface EventConfigProps {
+  actions?: ActionItem[]
+}
+
+export interface ComponentProps {
+  // 绑定点击事件时可能用到的参数
+  onClick?: {
+    /** EventActionEnums.GoToLink */
+    url?: string;
+    /** EventActionEnums.ShowMessage */
+    messsageMethod?: string;
+    messsageContent?: string;
+  } & EventConfigProps;
+  [key: string]: unknown;
+}
 
 export interface Component {
   /** 组件的id标识 */
   id: number;
   /** 组件的名称 */
   name: string;
-  /** 组件的props */
-  props: Record<string, unknown>;
+  /** 组件的props 自定义事件会绑定到这里 */
+  props: ComponentProps;
   children?: Component[];
   parentId?: number;
   /** 组件的描述 展示用 */
