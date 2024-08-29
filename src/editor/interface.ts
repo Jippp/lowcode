@@ -18,7 +18,12 @@ export interface PreviewComponentWithChildren extends
 
 /** drop时传递的信息 */
 export interface DragObject {
-  type: Pick<Component, 'name'>['name']
+  /** 名称 */
+  type: Pick<Component, 'name'>['name'];
+  /** 类型 移动还是新建 */
+  dragType?: 'move' | 'add';
+  /** 组件id */
+  dragComponentId?: number;
 }
 
 export interface CollectedProps {
