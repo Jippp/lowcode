@@ -22,6 +22,17 @@ export type ShowMessageInputValue = {
 /** ShowMessage绑定事件的参数 */
 export type ShowMessageValue = ShowMessageSelectValue & ShowMessageInputValue;
 
+export type ComponentActionIdValue = {
+  /** 交互的组件Id */
+  componentId: number;
+};
+export type ComponentActionMethodValue = {
+  /** 交互的组件方法 */
+  componentMethod: string; 
+};
+/** ComponentAction绑定事件的参数 */
+export type ComponentActionValue = ComponentActionIdValue & ComponentActionMethodValue
+
 /** CustomJS绑定事件的参数 */
 export type CustomJSValue = { 
   /** 自定义的代码 */
@@ -31,7 +42,8 @@ export type CustomJSValue = {
 export interface ActionItem extends 
   Partial<GoToLinkValue>,
   Partial<ShowMessageValue>,
-  Partial<CustomJSValue>
+  Partial<CustomJSValue>,
+  Partial<ComponentActionValue>
 {
   /** 事件类型 */
   type: EventActionEnums;

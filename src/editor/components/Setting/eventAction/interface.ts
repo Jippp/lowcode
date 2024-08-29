@@ -4,6 +4,8 @@ export enum EventActionEnums {
   GoToLink = 'goToLink',
   /** 显示提示 */
   ShowMessage = 'showMessage',
+  /** 组件联动 */
+  ComponentAction = 'componentAction',
   /** 自定义JS代码 */
   CustomJS = 'customJS',
 }
@@ -14,6 +16,8 @@ export enum EventActionNameEnums {
   GoToLink = '跳转链接',
   /** 显示提示 */
   ShowMessage ='显示提示',
+  /** 组件联动 */
+  ComponentAction = '组件联动',
   /** 自定义JS代码 */
   CustomJS = '自定义JS代码',
 }

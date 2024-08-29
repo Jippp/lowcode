@@ -5,7 +5,7 @@ import useMaterialDrop from '@/editor/hooks/useMaterialDrop'
 const Container: FC<ComponentWithChildren> = ({ id, styles, children }) => {
 
   const [{ canDrop }, dropRef] = useMaterialDrop({
-    id, accept: ['Button', 'Container']
+    id, accept: ['Button', 'Container', 'Modal']
   })
   
   return (

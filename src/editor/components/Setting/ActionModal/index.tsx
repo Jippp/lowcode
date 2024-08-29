@@ -6,11 +6,12 @@ import {
   useComponentsStore, 
   EventConfigProps, 
   ActionItem,
-  GoToLinkValue, ShowMessageValue, CustomJSValue
+  GoToLinkValue, ShowMessageValue, CustomJSValue, ComponentActionValue
 } from '@/editorStore/components'
 import GoToLink, { GoToLinkOnChange } from '../eventAction/goToLink'
 import ShowMessage, { ShowMessageInputOnChange, ShowMessageSelectOnChange } from '../eventAction/showMessage'
 import CustomJS, { CustomJSOnChange } from '../eventAction/customJS'
+import ComponentAction, { ComponentActionIdOnChange, ComponentActionMethodOnChange } from '../eventAction/componentAction'
 import { EventActionEnums, EventActionNameEnums } from '../eventAction/interface'
 
 interface ActionModalProps {
@@ -25,6 +26,14 @@ const segmentConfig = Object.values(EventActionNameEnums)
 const defaultGoToLink: GoToLinkValue = { url: '' }
 const defaultShowMessage: ShowMessageValue = { messsageContent: '', messsageMethod: '' }
 const defaultCustomJS: CustomJSValue = { code: '' }
+const defaultComponentActionJS: ComponentActionValue = { componentId: 0, componentMethod: '' }
+const getDefaultActionsMap = () => {
+  const result = {} as Record<EventActionEnums, ActionItem>
+  for(const key of Object.values(EventActionEnums)) {
+    result[key as EventActionEnums] = {} as ActionItem
+  }
+  return result
+}
 
 /** 绑定事件的弹窗 */
 const ActionModal: FC<ActionModalProps> = ({
@@ -35,6 +44,7 @@ const ActionModal: FC<ActionModalProps> = ({
   const goToLinkValueRef = useRef(defaultGoToLink)
   const showMessageValueRef = useRef(defaultShowMessage)
   const customJSValueRef = useRef(defaultCustomJS)
+  const componentActionValueRef = useRef(defaultComponentActionJS)
 
   const { selectedComponent } = useComponentsStore()
 
@@ -44,11 +54,7 @@ const ActionModal: FC<ActionModalProps> = ({
   const eventActionsMap = useMemo(() => eventActions.reduce((map, item) => {
     map[item.type as EventActionEnums] = item
     return map
-  }, {
-    [EventActionEnums.GoToLink]: {} as ActionItem,
-    [EventActionEnums.ShowMessage]: {} as ActionItem,
-    [EventActionEnums.CustomJS]: {} as ActionItem,
-  }), [eventActions])
+  }, getDefaultActionsMap()), [eventActions])
   // 更新 新增可配置事件时需要添加
   if(!goToLinkValueRef.current.url) {
     goToLinkValueRef.current = { url: eventActionsMap[EventActionEnums.GoToLink].url! }
@@ -61,6 +67,12 @@ const ActionModal: FC<ActionModalProps> = ({
   }
   if(!customJSValueRef.current.code) {
     customJSValueRef.current = { code: eventActionsMap[EventActionEnums.CustomJS].code! }
+  }
+  if(!componentActionValueRef.current.componentMethod) {
+    componentActionValueRef.current = { 
+      componentId: eventActionsMap[EventActionEnums.ComponentAction].componentId!, 
+      componentMethod: eventActionsMap[EventActionEnums.ComponentAction].componentMethod! 
+    }
   }
 
   const handleSgementedChange = useMemoizedFn((value: string) => {
@@ -85,6 +97,16 @@ const ActionModal: FC<ActionModalProps> = ({
   const handleCustomJSChange: CustomJSOnChange = useMemoizedFn((customJSValue) => {
     customJSValueRef.current = customJSValue
   })
+
+  /** ComponentAction组件变动后触发 */
+  const handleComponentIdChange: ComponentActionIdOnChange = useMemoizedFn((idValue) => {
+    componentActionValueRef.current.componentId = idValue.componentId
+  })
+  /** ComponentAction组件变动后触发 */
+  const handleComponentMethodChange: ComponentActionMethodOnChange = useMemoizedFn((methodValue) => {
+    componentActionValueRef.current.componentMethod = methodValue.componentMethod
+  })
+
   // 新增可配置事件时需要添加
 
   const handleOnOk = useMemoizedFn(() => {
@@ -98,6 +120,9 @@ const ActionModal: FC<ActionModalProps> = ({
     }
     if(customJSValueRef.current.code) {
       updatedActions.push({ type: EventActionEnums.CustomJS, ...customJSValueRef.current })
+    }
+    if(componentActionValueRef.current.componentId && componentActionValueRef.current.componentMethod) {
+      updatedActions.push({ type: EventActionEnums.ComponentAction, ...componentActionValueRef.current })
     }
     // 合并新的和旧的(重复保存新的) 触发外部事件
     onOk(unionBy([...updatedActions, ...eventActions], 'type'))
@@ -142,6 +167,13 @@ const ActionModal: FC<ActionModalProps> = ({
             actionItem={eventActionsMap[EventActionEnums.ShowMessage]}
             selectOnChange={handleShowMessageSelectChange}
             inputOnChange={handleShowMessageInputChange}
+          />
+        )}
+        {selectedKey === EventActionNameEnums.ComponentAction && (
+          <ComponentAction
+            actionItem={eventActionsMap[EventActionEnums.ComponentAction]}
+            onIdChange={handleComponentIdChange}
+            onMethodChange={handleComponentMethodChange}
           />
         )}
         {selectedKey === EventActionNameEnums.CustomJS && (

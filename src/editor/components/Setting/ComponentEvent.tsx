@@ -116,6 +116,23 @@ const ComponentEvent: FC = () => {
                     ) : null
                   }
                   {
+                    action.type === EventActionEnums.ComponentAction ? (
+                      <div className='border border-[#aaa] mt-[10px] p-[10px] rounded-[8px] relative'>
+                        <div className='text-[blue]'>{EventActionNameEnums.ComponentAction}</div>
+                        <div>绑定id: {action.componentId}</div>
+                        <div>绑定方法: {action.componentMethod}</div>
+                        <div 
+                          className='absolute top-[10px] right-[30px] cursor-pointer'
+                          onClick={() => handleEditAction(event.name, EventActionNameEnums.ComponentAction)}
+                        ><EditOutlined /></div>
+                        <div 
+                          className='absolute top-[10px] right-[10px] cursor-pointer'
+                          onClick={() => handleDeleteAction(currentEventProps, index)}
+                        ><DeleteOutlined /></div>
+                      </div>
+                    ) : null
+                  }
+                  {
                     action.type === EventActionEnums.CustomJS ? (
                       <div className='border border-[#aaa] mt-[10px] p-[10px] rounded-[8px] relative'>
                         <div className='text-[blue]'>{EventActionNameEnums.CustomJS}</div>

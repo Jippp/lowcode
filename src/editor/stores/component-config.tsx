@@ -7,6 +7,8 @@ import Button, { ButtonProps } from '@/editor/materials/Button'
 import ButtonPreview from '@/editor/materials/Button/preview'
 import Page from '@/editor/materials/Page'
 import PagePreview from '@/editor/materials/Page/preview'
+import Modal from '@/editor/materials/Modal'
+import ModalPreview from '@/editor/materials/Modal/preview'
 
 // settint区域form表单展示，这里定义了一些配置
 export interface ComponentSetter {
@@ -21,6 +23,11 @@ export interface ComponentSetter {
 }
 
 export interface EventSetter {
+  name: string;
+  label: string;
+}
+
+export interface ComponentMethod {
   name: string;
   label: string;
 }
@@ -41,6 +48,7 @@ export interface ComponentConfig {
   stylesSetter?: ComponentSetter[];
   /** 自定义事件的配置 */
   eventSetter?: EventSetter[];
+  methods?: ComponentMethod[]
 }
 
 interface State {
@@ -71,6 +79,43 @@ export const useComponentConfigStore = create<State & Action>(set => ({
       editing: Container,
       preview: ContainerPreview,
       desc: '容器',
+    },
+    'Modal': {
+      name: 'Modal',
+      defaultProps: {
+        title: '弹窗标题'
+      },
+      editing: Modal,
+      preview: ModalPreview,
+      desc: '弹窗',
+      setter: [
+        {
+          name: 'title',
+          label: '弹窗标题',
+          type: 'input',
+        }
+      ],
+      stylesSetter: [],
+      eventSetter: [
+        {
+          name: 'onOk',
+          label: '确定事件'
+        },
+        {
+          name: 'onCancel',
+          label: '取消事件'
+        },
+      ],
+      methods: [
+        {
+          name: 'open',
+          label: '打开弹窗'
+        },
+        {
+          name: 'close',
+          label: '关闭弹窗'
+        },
+      ]
     },
     'Button': {
       name: 'Button',
